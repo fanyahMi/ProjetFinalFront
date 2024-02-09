@@ -71,13 +71,59 @@ const Chatbox = ({ togglePopup, auteur_id }) => {
   const chatBottomRef = document.querySelector('#chat-scroll');
   const [recepteur, setRecepteur] = useState('');
 
+  const sendMessage = async (event) => {
+    const envoyer = async (value) => {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Authorization', 'Bearer ' + sessionStorage.getItem('token'));
+      const response = await fetch(
+        `https://wscloudfinal-production.up.railway.app/api/v1/discussions/message/envoye?participant2=${auteur_id}`,
+        {
+          method: 'POST',
+          headers: headers,
+          body: value
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    };
+    const scrollToBottom =
+      (() => {
+        if (chatBottomRef) {
+          chatBottomRef.scrollTo({
+            top: chatBottomRef.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      },
+      [chatBottomRef]);
+    let tempMessage = message.trim();
+    if (tempMessage !== '') {
+      const newMessage = {
+        emetteur: 'YourUserId',
+        contenu: tempMessage,
+        date: new Date().toISOString()
+      };
+      setMessageList((prevMessages) => [...prevMessages, newMessage]);
+      const value = JSON.stringify({
+        contenu: tempMessage
+      });
+      setMessage('');
+      envoyer(value);
+      scrollToBottom();
+    }
+    setMessage('');
+  };
+
   const sendMessageOnEnter = async (event) => {
     const envoyer = async (value) => {
       const headers = new Headers();
       headers.append('Content-Type', 'application/json');
       headers.append('Authorization', 'Bearer ' + sessionStorage.getItem('token'));
       const response = await fetch(
-        `http://localhost:8080/api/v1/discussions/message/envoye?participant2=${auteur_id}`,
+        `https://wscloudfinal-production.up.railway.app/api/v1/discussions/message/envoye?participant2=${auteur_id}`,
         {
           method: 'POST',
           headers: headers,
@@ -126,7 +172,7 @@ const Chatbox = ({ togglePopup, auteur_id }) => {
         headers.append('Content-Type', 'application/json');
         headers.append('Authorization', 'Bearer ' + sessionStorage.getItem('token'));
         const response = await fetch(
-          `http://localhost:8080/api/v1/discussions/message/envoye?participant2=${auteur_id}`,
+          `https://wscloudfinal-production.up.railway.app/api/v1/discussions/message/envoye?participant2=${auteur_id}`,
           {
             method: 'POST',
             headers: headers,
@@ -139,7 +185,7 @@ const Chatbox = ({ togglePopup, auteur_id }) => {
         }
       };
       const response = await Api.fetch(
-        `http://localhost:8080/api/v1/discussions/prive?participant2=${auteur_id}`,
+        `https://wscloudfinal-production.up.railway.app/api/v1/discussions/prive?participant2=${auteur_id}`,
         'GET',
         {
           'Content-Type': 'application/json'
@@ -253,7 +299,7 @@ const Chatbox = ({ togglePopup, auteur_id }) => {
           InputProps={{
             endAdornment: (
               <Box display="flex">
-                <IconButton size="small">
+                <IconButton size="small" onClick={sendMessage}>
                   <Icon>send</Icon>
                 </IconButton>
               </Box>

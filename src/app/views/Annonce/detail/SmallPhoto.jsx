@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, styled } from '@mui/material';
 import { convertHexToRGB } from 'app/utils/utils';
 import 'slick-carousel/slick/slick.css';
@@ -19,13 +19,11 @@ const StyledCard = styled(Card)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: { padding: '16px !important' }
 }));
 
-const SmallPhoto = (props) => {
-  const { image } = useState(props.imageUrl);
-  console.log(image);
+const SmallPhoto = ({ imageUrl }) => {
   return (
     <CardRoot>
       <StyledCard elevation={0}>
-        <img src={image} style={{ height: '130px', width: '100%' }} alt={'alt'} />
+        <img src={imageUrl} style={{ height: '130px', width: '100%' }} alt={'alt'} />
       </StyledCard>
     </CardRoot>
   );

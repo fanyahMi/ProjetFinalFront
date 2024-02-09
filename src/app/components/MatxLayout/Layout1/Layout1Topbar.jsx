@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -79,6 +79,12 @@ const Layout1Topbar = () => {
   const { settings, updateSettings } = useSettings();
   const { logout } = useAuth();
   const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [userEmail, setUserEmail] = useState('User');
+  useEffect(() => {
+    if (sessionStorage.getItem('email') !== null) {
+      setUserEmail(sessionStorage.getItem('email'));
+    }
+  }, [userEmail]);
 
   const updateSidebarMode = (sidebarSettings) => {
     updateSettings({ layout1Settings: { leftSidebar: { ...sidebarSettings } } });
@@ -109,7 +115,7 @@ const Layout1Topbar = () => {
     const logoutResult = await logoutUser();
     logout();
     if (logoutResult.success) {
-      navigate('/');
+      navigate('/annonces');
     } else {
       console.error('Échec de la déconnexion:', logoutResult.message);
       alert(logoutResult.message);
@@ -139,7 +145,7 @@ const Layout1Topbar = () => {
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    <strong>User</strong>
+                    <strong>{userEmail}</strong>
                   </Span>
                 </Hidden>
                 <Avatar

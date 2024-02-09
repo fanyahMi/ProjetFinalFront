@@ -59,12 +59,16 @@ const JwtLogin = () => {
     data.append('email', values.email);
     data.append('mdp', values.password);
     try {
-      const response = await fetch('http://localhost:8080/api/auth/v1/login', {
-        method: 'POST',
-        body: data
-      });
+      const response = await fetch(
+        'https://wscloudfinal-production.up.railway.app/api/auth/v1/login',
+        {
+          method: 'POST',
+          body: data
+        }
+      );
       const responseData = await response.json();
       if (response.ok) {
+        sessionStorage.setItem('email', values.email);
         sessionStorage.setItem('token', responseData.data);
         navigate('/annonces');
       } else {

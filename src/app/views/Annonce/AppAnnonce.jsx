@@ -12,9 +12,13 @@ const AppAnnonce = () => {
   const [annonces, setAnnonces] = useState([]);
   useEffect(() => {
     const fetchAnnonce = async () => {
-      const response = await ApiSans.fetch('http://localhost:8080/api/v1/annonces/valide', 'GET', {
-        'Content-Type': 'application/json'
-      });
+      const response = await ApiSans.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/v1/annonces/valide',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
       setAnnonces(response.data);
     };
     fetchAnnonce();

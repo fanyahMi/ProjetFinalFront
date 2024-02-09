@@ -47,23 +47,36 @@ const GrandImage = (props) => {
 
   return (
     <>
-      <CardRoot>
-        <Slider {...settings}>
-          {props.imageData?.map((image, index) => (
-            <div key={index}>
-              <StyledCard elevation={0}>
-                <img
-                  src={image.data}
-                  style={{ height: getSliderHeight(), width: '100%' }}
-                  alt={`upgrade-${index}`}
-                />
-              </StyledCard>
-            </div>
-          ))}
-        </Slider>
-        <br />
-        <br />
-      </CardRoot>
+      {props.imageData && props.imageData.length > 1 ? (
+        <CardRoot>
+          <Slider {...settings}>
+            {props.imageData.map((image, index) => (
+              <div key={index}>
+                <StyledCard elevation={0}>
+                  <img
+                    src={image?.data}
+                    style={{ height: getSliderHeight(), width: '100%' }}
+                    alt={`upgrade-${index}`}
+                  />
+                </StyledCard>
+              </div>
+            ))}
+          </Slider>
+          <br />
+          <br />
+        </CardRoot>
+      ) : (
+        props.imageData &&
+        props.imageData[0] && (
+          <StyledCard elevation={0}>
+            <img
+              src={props.imageData[0]?.data}
+              style={{ height: getSliderHeight(), width: '100%' }}
+              alt={`upgrade`}
+            />
+          </StyledCard>
+        )
+      )}
 
       {isMobile ? null : (
         <Grid
@@ -94,7 +107,7 @@ const GrandImage = (props) => {
                 alignItems: 'center'
               }}
             >
-              <SmallPhoto imageUrl={image.data} />
+              <SmallPhoto imageUrl={image?.data} />
             </Grid>
           ))}
         </Grid>

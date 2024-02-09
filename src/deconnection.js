@@ -5,7 +5,7 @@ export const logoutUser = async () => {
     headers.append('Authorization', `Bearer ${token}`);
 
     const response = await fetch(
-      'http://localhost:8080/api/auth/v1/logout',
+      'https://wscloudfinal-production.up.railway.app/api/auth/v1/logout',
       {
         method: 'Post',
         headers: headers
@@ -16,6 +16,8 @@ export const logoutUser = async () => {
 
     if (response.ok) {
       sessionStorage.removeItem('token');
+      sessionStorage.removeItem('email');
+      window.location.href = '/annonces';
       return { success: true };
     } else {
       return { success: false, message: data.message };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -13,19 +13,19 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import Api from 'app/functions/Api';
 const AppAvance = () => {
   const [searchCriteria, setSearchCriteria] = useState({
-    motCle: null,
+    keyWord: null,
     lieu: null,
-    minPrix: null,
-    maxPrix: null,
-    minKm: null,
-    maxKm: null,
+    min_prix: null,
+    max_prix: null,
+    min_km: null,
+    max_km: null,
     marque: null,
     categorie: null,
-    minAnnee: null,
-    maxAnnee: null,
+    min_annee: null,
+    max_annee: null,
     carburant: null
   });
 
@@ -36,43 +36,57 @@ const AppAvance = () => {
     }));
   };
 
-  const categoriesOptions = [
-    { label: 'Sélectionnez une catégorie', value: '' },
-    { label: 'Berline', value: 'Berline' },
-    { label: 'SUV', value: 'SUV' },
-    { label: 'Hatchback', value: 'Hatchback' },
-    { label: 'Camionnette', value: 'Camionnette' }
-  ];
+  const [categories, setCategories] = useState([]);
+  const [lieux, setLieux] = useState([]);
+  const [marques, setMarques] = useState([]);
+  const [carburants, setCarburants] = useState([]);
+  useEffect(() => {
+    const fetchCategorie = async () => {
+      const response = await Api.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/v1/categories',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
+      setCategories(response.data);
+    };
+    const fetchlieux = async () => {
+      const response = await Api.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/lieux',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
+      setLieux(response.data);
+    };
+    const fetchMarques = async () => {
+      const response = await Api.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/v1/marques',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
+      setMarques(response.data);
+    };
+    const fetchCarburant = async () => {
+      const response = await Api.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/v1/models/v1/carburants',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
+      setCarburants(response.data);
+    };
+    fetchCarburant();
+    fetchMarques();
+    fetchlieux();
+    fetchCategorie();
+  }, []);
 
-  const lieuxOptions = [
-    { label: 'Sélectionnez un lieu', value: '' },
-    { label: 'Antananarivo', value: 'Antananarivo' },
-    { label: 'Antsirabe', value: 'Antsirabe' },
-    { label: 'Toamasina', value: 'Toamasina' },
-    { label: 'Fianarantsoa', value: 'Fianarantsoa' }
-  ];
-
-  const marquesOptions = [
-    { label: 'Sélectionnez une marque', value: '' },
-    { label: 'Toyota', value: 'Toyota' },
-    { label: 'Honda', value: 'Honda' },
-    { label: 'Ford', value: 'Ford' },
-    { label: 'Mazda', value: 'Mazda' },
-    { label: 'Nissan', value: 'Nissan' },
-    { label: 'Audi', value: 'Audi' },
-    { label: 'Porsche', value: 'Porsche' },
-    { label: 'Range Rover', value: 'Range Rover' },
-    { label: 'BMW', value: 'BMW' },
-    { label: 'Subaru', value: 'Subaru' }
-  ];
-
-  const carburantsOptions = [
-    { label: 'Sélectionnez un type de carburant', value: '' },
-    { label: 'Essence', value: 'Essence' },
-    { label: 'Diesel', value: 'Diesel' },
-    { label: 'Hybride', value: 'Hybride' },
-    { label: 'Electrique', value: 'Electrique' }
-  ];
   const navigate = useNavigate();
 
   const handleSearch = () => {
@@ -80,8 +94,6 @@ const AppAvance = () => {
       .filter(([key, value]) => value !== null && value !== '')
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
-    console.log(queryParams + '    huhuh');
-    // Naviguer vers la page de recherche avec les paramètres de requête
     navigate(`/recherche?${queryParams}`);
   };
 
@@ -96,8 +108,8 @@ const AppAvance = () => {
             <TextField
               label="Mot-clé"
               fullWidth
-              value={searchCriteria.motCle}
-              onChange={(e) => handleInputChange('motCle', e.target.value)}
+              value={searchCriteria.keyWord}
+              onChange={(e) => handleInputChange('keyWord', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -109,9 +121,9 @@ const AppAvance = () => {
                 value={searchCriteria.lieu || ''}
                 onChange={(e) => handleInputChange('lieu', e.target.value)}
               >
-                {lieuxOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {lieux?.map((option) => (
+                  <MenuItem key={option.lieu} value={option.lieu}>
+                    {option.lieu}
                   </MenuItem>
                 ))}
               </Select>
@@ -126,9 +138,9 @@ const AppAvance = () => {
                 value={searchCriteria.marque || ''}
                 onChange={(e) => handleInputChange('marque', e.target.value)}
               >
-                {marquesOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {marques?.map((option) => (
+                  <MenuItem key={option.marque} value={option.marque}>
+                    {option.marque}
                   </MenuItem>
                 ))}
               </Select>
@@ -143,9 +155,9 @@ const AppAvance = () => {
                 value={searchCriteria.categorie || ''}
                 onChange={(e) => handleInputChange('categorie', e.target.value)}
               >
-                {categoriesOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {categories?.map((option) => (
+                  <MenuItem key={option.categorie} value={option.categorie}>
+                    {option.categorie}
                   </MenuItem>
                 ))}
               </Select>
@@ -160,9 +172,9 @@ const AppAvance = () => {
                 value={searchCriteria.carburant || ''}
                 onChange={(e) => handleInputChange('carburant', e.target.value)}
               >
-                {carburantsOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {carburants?.map((option) => (
+                  <MenuItem key={option.carburant} value={option.carburant}>
+                    {option.carburant}
                   </MenuItem>
                 ))}
               </Select>
@@ -173,8 +185,8 @@ const AppAvance = () => {
               label="Prix minimum"
               fullWidth
               type="number"
-              value={searchCriteria.minPrix}
-              onChange={(e) => handleInputChange('minPrix', e.target.value)}
+              value={searchCriteria.min_prix}
+              onChange={(e) => handleInputChange('min_prix', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -182,8 +194,8 @@ const AppAvance = () => {
               label="Prix maximum"
               fullWidth
               type="number"
-              value={searchCriteria.maxPrix}
-              onChange={(e) => handleInputChange('maxPrix', e.target.value)}
+              value={searchCriteria.max_prix}
+              onChange={(e) => handleInputChange('max_prix', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -191,8 +203,8 @@ const AppAvance = () => {
               label="Kilométrage minimum"
               fullWidth
               type="number"
-              value={searchCriteria.minKm}
-              onChange={(e) => handleInputChange('minKm', e.target.value)}
+              value={searchCriteria.min_km}
+              onChange={(e) => handleInputChange('min_km', e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -200,8 +212,8 @@ const AppAvance = () => {
               label="Kilométrage maximum"
               fullWidth
               type="number"
-              value={searchCriteria.maxKm}
-              onChange={(e) => handleInputChange('maxKm', e.target.value)}
+              value={searchCriteria.max_km}
+              onChange={(e) => handleInputChange('max_km', e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>

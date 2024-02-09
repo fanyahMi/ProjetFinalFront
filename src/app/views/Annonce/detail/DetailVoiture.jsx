@@ -32,6 +32,7 @@ const dataConstants = {
     icon: 'drive_eta',
     properties: [
       { label: 'Marque', key: 'marque' },
+      { label: 'Model', key: 'model' },
       { label: 'Matricule', key: 'matricule' },
       { label: 'Kilometrage', key: 'kilometrage' },
       { label: 'Categorie', key: 'categorie' },

@@ -35,18 +35,10 @@ const Paragraph = styled('p')(({ theme }) => ({
   }
 }));
 
-const FavButton = styled(Button)({
-  position: 'absolute',
-  top: '10px',
-  right: '10px'
-});
-
 const ChaqueAnnonce = ({ data }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const images = data.photos.map((photo) => photo.data);
   const navigate = useNavigate();
-
   const settings = {
     dots: true,
     infinite: true,
@@ -59,53 +51,41 @@ const ChaqueAnnonce = ({ data }) => {
 
   const handleFavButtonClick = async () => {
     const annonceId = data.annonce_id;
-    const response = await Api.fetch(
-      `http://localhost:8080/api/v1/annonces/favoris/${annonceId}`,
+    await Api.fetch(
+      `https://wscloudfinal-production.up.railway.app/api/v1/annonces/favoris/${annonceId}`,
       'PUT',
       {
         'Content-Type': 'application/json'
       }
     );
-    console.log("ID de l'annonce:", annonceId);
-    console.log(response);
     setIsFavorited(!isFavorited);
   };
 
   return (
     <CardRoot>
-      <Slider {...settings}>
-        {images.map((image, index) => (
-          <div
-            key={index}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <StyledCard elevation={0}>
-              <img
-                src={image}
-                style={{ height: '255px', width: '100%' }}
-                alt={`upgrade-${index}`}
-              />
-              {isHovered && (
-                <FavButton
-                  size="small"
-                  variant="contained"
-                  color={isFavorited ? 'primary' : 'secondary'}
-                  onClick={handleFavButtonClick}
-                >
-                  {isFavorited ? 'Favori' : 'Non Favori'}
-                </FavButton>
-              )}
-            </StyledCard>
-          </div>
-        ))}
-      </Slider>
+      {images.length > 1 ? (
+        <Slider {...settings}>
+          {images.map((image, index) => (
+            <div key={index}>
+              <StyledCard elevation={0}>
+                <img
+                  src={image}
+                  style={{ height: '255px', width: '100%' }}
+                  alt={`upgrade-${index}`}
+                />
+              </StyledCard>
+            </div>
+          ))}
+        </Slider>
+      ) : (
+        // Si la longueur du tableau d'images est égale à 1, affichez simplement l'image sans le carrousel
+        <StyledCard elevation={0}>
+          <img src={images[0]} style={{ height: '255px', width: '100%' }} alt={`upgrade-0`} />
+        </StyledCard>
+      )}
       <br />
       <Paragraph>
-        <strong>
-          {data.detailvoiture.marque} {data.detailvoiture.modele}
-        </strong>{' '}
-        <tab /> <tab />
+        <strong>{data.detailvoiture.model}</strong> <tab /> <tab />
         <tab />
         {data.detailvoiture.categorie} <br />
         <i>{data.lieu}</i>

@@ -16,6 +16,7 @@ const Description = ({ annonce }) => {
         detailvoiture={annonce.detailvoiture}
         proprietes={annonce.proprietes}
         description={annonce.description}
+        model={annonce.model}
       />
     </>
   );

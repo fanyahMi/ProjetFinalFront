@@ -1,8 +1,9 @@
-import { Box, styled, Grid } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Grid, styled } from '@mui/material';
+import Api from 'app/functions/Api';
 import { Breadcrumb, SimpleCard } from 'app/components';
 import ChaqueAnnonce from './ChaqueAnnonce';
-import React, { useState, useEffect } from 'react';
-import Api from 'app/functions/Api';
+
 const Container = styled('div')(({ theme }) => ({
   margin: '10px',
   [theme.breakpoints.down('sm')]: { margin: '10px' },
@@ -12,6 +13,16 @@ const Container = styled('div')(({ theme }) => ({
   }
 }));
 
+const NoAnnouncementMessage = styled(Typography)({
+  textAlign: 'center',
+  padding: '20px',
+  border: '1px solid #ccc',
+  borderRadius: '5px',
+  backgroundColor: '#f7f7f7',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+  marginBottom: '20px'
+});
+
 const AppHistorique = () => {
   if (sessionStorage.getItem('token') === null) {
     alert(
@@ -20,12 +31,17 @@ const AppHistorique = () => {
     window.location.href = '/';
     console.log('Redirection terminée.');
   }
+
   const [annonces, setAnnonces] = useState([]);
   useEffect(() => {
     const fetchAnnonce = async () => {
-      const response = await Api.fetch('http://localhost:8080/api/v1/annonces/utilisateur', 'GET', {
-        'Content-Type': 'application/json'
-      });
+      const response = await Api.fetch(
+        'https://wscloudfinal-production.up.railway.app/api/v1/annonces/utilisateur',
+        'GET',
+        {
+          'Content-Type': 'application/json'
+        }
+      );
       setAnnonces(response.data);
     };
 
@@ -44,13 +60,19 @@ const AppHistorique = () => {
       </Box>
 
       <SimpleCard title="Historique annonce">
-        {annonces.map((annonce, index) => (
-          <Grid spacing={2} key={index} sx={{ mt: 2, marginBottom: '0.3rem' }}>
-            <Grid item lg={9} md={9} sm={12} xs={12}>
-              <ChaqueAnnonce {...annonce} />
+        {annonces.length === 0 ? (
+          <NoAnnouncementMessage variant="body1">
+            Aucune annonce dans l'historique pour l'instant.
+          </NoAnnouncementMessage>
+        ) : (
+          annonces.map((annonce, index) => (
+            <Grid spacing={2} key={index} sx={{ mt: 2, marginBottom: '0.3rem' }}>
+              <Grid item lg={9} md={9} sm={12} xs={12}>
+                <ChaqueAnnonce {...annonce} />
+              </Grid>
             </Grid>
-          </Grid>
-        ))}
+          ))
+        )}
       </SimpleCard>
     </Container>
   );
