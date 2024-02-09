@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { Box, styled, Grid } from '@mui/material';
-import { Breadcrumb, SimpleCard } from 'app/components';
+import { Breadcrumb } from 'app/components';
 import Destinataire from './Destinataire';
 
 const Container = styled('div')(({ theme }) => ({
